@@ -19,3 +19,9 @@ An event :
 Key/Value Paris : 
 - Key can be complex domain objects but are often primitive types like strings or integers.
 - Values are typically the serialized representation of an application domain object or some form of raw message
+
+## Topics 
+
+- fundamental unit of organization
+- differents topics to hold differents kinds of events 
+- critical component in modern data infrastructure
