@@ -25,3 +25,17 @@ Key/Value Paris :
 - fundamental unit of organization
 - differents topics to hold differents kinds of events 
 - critical component in modern data infrastructure
+
+## Partitions
+
+- break a topic up into partitions
+- if a message has no key, subsequent messages will be distributed round-robin among all the topic’s partitions.
+- if the message does have a key, then the destination partition will be computed from a hash of the key
+- messages having the same key always land in the same partition and always in order
+- partitions will affect the distribution of data across the topic
+- when create a partition, think about how many partitions need
+
+
+
+
+
