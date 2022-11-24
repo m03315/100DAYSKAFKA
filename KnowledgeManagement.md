@@ -35,6 +35,17 @@ Key/Value Paris :
 - partitions will affect the distribution of data across the topic
 - when create a partition, think about how many partitions need
 
+## Brokers
+
+- a network of machines
+- an computer, instance or container running the KAFKA process
+- manage partitions
+- handle write and read requests 
+- manage replication of partitions
+
+goal ->  fast & scale easily 
+
+
 
 
 
