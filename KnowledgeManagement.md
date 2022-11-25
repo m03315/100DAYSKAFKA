@@ -45,6 +45,23 @@ Key/Value Paris :
 
 goal ->  fast & scale easily 
 
+## Replication
+
+- copies of data fro fault tolerance
+- one lead partition and N-1 followers
+- write and read only happen to the leader
+- an invisible process to most developers
+- tunable in the producer 
+
+## Producers
+
+- client application
+- put messages into topics
+- connection pooling
+- network buffering
+- partitioning
+
+
 
 
 
