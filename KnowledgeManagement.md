@@ -70,6 +70,11 @@ goal ->  fast & scale easily
 - horizontally and elastically scalable
 - maintain ordering within partitions at scale
 
+## Ecosystem
+
+- Topics, partitions, events are functionality around core Kafka
+- These functionalities will not contribute value directly to your customers
+- Don't build common layers of application functionality to repeat certain undifferentiated tasks
 
 
 
