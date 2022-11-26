@@ -61,7 +61,14 @@ goal ->  fast & scale easily
 - network buffering
 - partitioning
 
+## Consumers
 
+- client application
+- read messages from topics
+- connection pooling
+- network protocol
+- horizontally and elastically scalable
+- maintain ordering within partitions at scale
 
 
 
