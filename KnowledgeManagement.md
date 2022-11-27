@@ -76,6 +76,41 @@ goal ->  fast & scale easily
 - These functionalities will not contribute value directly to your customers
 - Don't build common layers of application functionality to repeat certain undifferentiated tasks
 
+## Kafka Connect
+
+- Data intergration system and ecosystem
+- External systems are not Kafka
+- External client process; does not run on Brokers
+- Horizontal scalable
+- Fault tolerant 
+- Declarative
+- Pluggable software component
+- Interface to external systems and to Kafka
+- exist as runtime entities
+- source connectors act as producers
+- Sink connectors acts as consumers
+
+
+## Schema Registry
+
+- server process external to Kafka brokers
+- maintains a database of schemas
+- HA deployment option available
+- Consumer/Producer API component
+- Define schema compatibility rules per topic
+- Producer API prevents incompatible messages from being produced
+- Consumer API prevents incompatible messages from being consumed
+
+### Supported Formats
+
+- JSON Schema
+- Avro
+- Protocol Buffers 
+
+
+
+
+
 
 
 
