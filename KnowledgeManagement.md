@@ -119,7 +119,19 @@ goal ->  fast & scale easily
 
 > Get your hands dirty with codes
 
+## ksqlDB
 
+- A database optimized for stream processing
+- Runs on its own scalable,fault-tolerant cluster adjacent to the kafka cluster
+- Stream processing programs written in SQL
+- Command-line interface
+- REST API for application integration
+- JAVA library
+- Kafka Connect integration
+
+we can do : 
+
+create a stream from existing topic -> run SQL query from this new stream 
 
 
 
