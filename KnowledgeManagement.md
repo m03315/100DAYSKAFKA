@@ -133,6 +133,20 @@ we can do :
 
 create a stream from existing topic -> run SQL query from this new stream 
 
+## KRaft:
+
+- early access and should be used in development only
+- not suitable for production
+- use new quorum controller service in kafka wich replaces the previous controller and makes use of an event based variant of the Raft consensus protocol
+
+### New quorum controller
+
+- Enable cluster to scale to millions of partitions through improved control plane performance with new metadata management
+- Improve stability, makes it easier to monitor, administer and support kafka.
+- Provide a lightwight, single process way to get start with kafka
+- make controller failover near-instantaneous 
+
+
 
 
 
