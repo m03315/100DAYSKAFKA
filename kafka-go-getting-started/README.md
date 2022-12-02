@@ -1,88 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # GO
 
 ## Install GO 
@@ -90,7 +5,6 @@
 ```
 wget https://go.dev/dl/go1.19.3.linux-amd64.tar.gz
 ```
-
 
 ### Remove previous GO version and install a new one
 
@@ -120,7 +34,7 @@ go get github.com/confluentinc/confluent-kafka-go/kafka
 
 ## Configuration
 
-rename getting-started-template.properties to getting-started.properties
+rename [getting-started-template.properties](getting-started-template.properties) to getting-started.properties
 
 
 replace below values by yours 
@@ -134,9 +48,9 @@ create a topic named purchases
 
 ## Build a Producer
 
-a file named util.go will help to load configuration file for the go application
+a file named [util.go](util.go) will help to load configuration file for the go application
 
-producer.go file is the producer application code
+[producer.go](producer.go) file is the producer application code
 
 
 ### compile the producer
@@ -146,7 +60,7 @@ go build -o out/producer util.go producer.go
 ```
 ## Build a Consumer
 
-consumer.go file is the consumer application code 
+[consumer.go](consumer.go) file is the consumer application code 
 
 ### compile the consumer
 
