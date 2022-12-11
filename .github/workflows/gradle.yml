@@ -29,22 +29,22 @@ jobs:
     - name: Build with Gradle (kafka-consumer-application)
       uses: gradle/gradle-build-action@v2
       with:
-        arguments: test
+        arguments: wrapper test
         build-root-directory: ./kafka-consumer-application
     - name: Build with Gradle (kafka-producer-application-callback)
       uses: gradle/gradle-build-action@v2
       with:
-        arguments: test
+        arguments: wrapper test
         build-root-directory: ./kafka-producer-application-callback
     - name: Build with Gradle (kafka-producer-application)
       uses: gradle/gradle-build-action@v2
       with:
-        arguments: test
+        arguments: wrapper test
         build-root-directory: ./kafka-producer-application
     - name: Build with Gradle (kafka-spring-boot-getting-started)
       uses: gradle/gradle-build-action@v2
       with:
-        arguments: test
+        arguments: wrapper test
         build-root-directory: ./kafka-spring-boot-getting-started
         
      
