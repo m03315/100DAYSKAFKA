@@ -25,21 +25,28 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '11'
-        distribution: 'temurin'
-    - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2
+        distribution: 'adopt'
+    - name: Validate Gradle wrapper
+      uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
     - name: Build with Gradle (kafka-consumer-application)
-      working-directory: ./kafka-consumer-application
-      run: ./gradlew build
+      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      with:
+        arguments: build
+        build-root-directory: ./kafka-consumer-application
     - name: Build with Gradle (kafka-producer-application-callback)
-      working-directory: ./kafka-producer-application-callback
-      run: ./gradlew build
+      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      with:
+        arguments: build
+        build-root-directory: ./kafka-producer-application-callback
     - name: Build with Gradle (kafka-producer-application)
-      working-directory: ./kafka-producer-application
-      run: ./gradlew build
+      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      with:
+        arguments: build
+        build-root-directory: ./kafka-producer-application    
     - name: Build with Gradle (kafka-spring-boot-getting-started)
-      working-directory: ./kafka-spring-boot-getting-started
-      run: ./gradlew build     
-       
+      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      with:
+        arguments: build
+        build-root-directory: ./kafka-spring-boot-getting-started
         
      
