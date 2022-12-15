@@ -149,6 +149,14 @@ confluent kafka topic consume orders-avro --value-format avro --print-key --deli
 
 Environement -> Credentials (right side menu) -> Add new key 
 
+## Fetch schema information from Schema Registry
+
+tell the consumer to fetch the Avro schema for this topic from Schema Registry and deserialize the data first
+
+```
+confluent kafka topic consume --value-format avro --sr-api-key {API Key} --sr-api-secret {API Secret} orders
+```
+
 
 
 
