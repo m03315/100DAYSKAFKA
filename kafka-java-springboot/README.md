@@ -40,7 +40,7 @@ curl -u {{ SR_API_KEY }}:{{ SR_API_SECRET }} https://{{ SR_ENDPOINT }}/subjects
 
 ## Produce and Consume Records
 
-This Spring Boot application has the following two components: [Producer](src/main/java/io/confluent/examples/clients/cloud/springboot/kafka/ProducerExample.java) and [Consumer](src/main/java/io/confluent/examples/clients/cloud/springboot/kafka/ConsumerExample.java) that are initialized during the Spring Boot application startup. The producer writes Kafka data to a topic in your Kafka cluster. Each record has a String key representing a username (for example, alice) and a value of a count, formatted with the Avro schema [DataRecordAvro.avsc](/src/main/avro/DataRecordAvro.avsc)
+This Spring Boot application has the following two components: [Producer](src/main/java/io/confluent/examples/clients/cloud/springboot/kafka/ProducerExample.java) and [Consumer](src/main/java/io/confluent/examples/clients/cloud/springboot/kafka/ConsumerExample.java) that are initialized during the Spring Boot application startup. The producer writes Kafka data to a topic in your Kafka cluster. Each record has a String key representing a username (for example, alice) and a value of a count, formatted with the Avro schema [DataRecordAvro.avsc](src/main/avro/DataRecordAvro.avsc)
 
 ### Run the producer and consumer with the following command
 ```
