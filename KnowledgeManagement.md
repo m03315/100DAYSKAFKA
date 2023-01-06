@@ -365,5 +365,119 @@ In practice, you would typically send an Avro object, Protobuf object, or Jackso
 
 Auto schema registration is set in the client application. By default, client applications automatically register new schemas. You can disable auto schema registration on your clients, which is typically recommended in production environments.
 
+## Schema Evolution and Compatibility
+
+When using Avro or other schema formats, one of the most important things is to manage the schemas and consider how these schemas should evolve
+
+Schema compatibility checking is implemented in Schema Registry by versioning every single schema. The compatibility type determines how Schema Registry compares the new schema with previous versions of a schema, for a given subject. When a schema is first created for a subject, it gets a unique id and it gets a version number, i.e., version 1. When the schema is updated (if it passes compatibility checks), it gets a new unique id and it gets an incremented version number, i.e., version 2.
+
+### Compatibility Types
+
+ The Confluent Schema Registry default compatibility type is BACKWARD
+ 
+ 
+|Compatibility Type	| Changes allowed	| Check against which schemas	| Upgrade first |
+| ----------- | ----------- | ----------- | ----------- |
+| BACKWARD	| Delete fields Add optional fields | Last version	| Consumers |
+| BACKWARD_TRANSITIVE | Delete fields Add optional fields | All previous versions	| Consumers |
+| FORWARD | Add fields Delete optional fields | Last version	| Producers |
+| FORWARD_TRANSITIVE | Add fields Delete optional fields | All previous versions	| Producers |
+| FULL	| Add optional fields Delete optional fields | Last version	| Any order |
+| FULL_TRANSITIVE | Add optional fields Delete optional fields | All previous versions	| Any order |
+| NONE	| All changes are accepted | Compatibility checking disabled	| Depends |
+
+
+### Backward Compatibility
+
+BACKWARD compatibility means that consumers using the new schema can read data produced with the last schema. For example, if there are three schemas for a subject that change in order X-2, X-1, and X then BACKWARD compatibility ensures that consumers using the new schema X can process data written by producers using schema X or X-1, but not necessarily X-2. If the consumer using the new schema needs to be able to process data written by all registered schemas, not just the last two schemas, then use BACKWARD_TRANSITIVE instead of BACKWARD. For example, if there are three schemas for a subject that change in order X-2, X-1, and X then BACKWARD_TRANSITIVE compatibility ensures that consumers using the new schema X can process data written by producers using schema X, X-1, or X-2.
+
+BACKWARD: consumer using schema X can process data produced with schema X or X-1
+BACKWARD_TRANSITIVE: consumer using schema X can process data produced with schema X, X-1, or X-2
+
+
+The main reason that BACKWARD compatibility mode is the default, and preferred for Kafka, is so that you can rewind consumers to the beginning of the topic. With FORWARD compatibility mode, you aren’t guaranteed the ability to read old messages.
+
+Also FORWARD compatibility mode is harder to work with. In a sense, you need to anticipate all future changes. For example, in FORWARD compatibility mode with Protobuf, you cannot add new message types to a schema.
+
+
+Consider the case where all of the data in Kafka is also loaded into HDFS, and you want to run SQL queries (for example, using Apache Hive) over all the data. Here, it is important that the same SQL queries continue to work even as the data is undergoing changes over time. To support this kind of use case, you can evolve the schemas in a backward compatible way. 
+
+Avro implementation details: Take a look at ResolvingDecoder in the Apache Avro project to understand how, for data that was encoded with an older schema, Avro decodes that data with a newer, backward-compatible schema.
+
+
+### Forward Compatibility
+
+FORWARD compatibility means that data produced with a new schema can be read by consumers using the last schema, even though they may not be able to use the full capabilities of the new schema. For example, if there are three schemas for a subject that change in order X-2, X-1, and X then FORWARD compatibility ensures that data written by producers using the new schema X can be processed by consumers using schema X or X-1, but not necessarily X-2. If data produced with a new schema needs to be read by consumers using all registered schemas, not just the last two schemas, then use FORWARD_TRANSITIVE instead of FORWARD. For example, if there are three schemas for a subject that change in order X-2, X-1, and X then FORWARD_TRANSITIVE compatibility ensures that data written by producers using the new schema X can be processed by consumers using schema X, X-1, or X-2.
+
+FORWARD: data produced using schema X can be read by consumers with schema X or X-1
+FORWARD_TRANSITIVE: data produced using schema X can be read by consumers with schema X, X-1, or X-2
+An example of a forward compatible schema modification is adding a new field. In most data formats, consumers that were written to process events without the new field will be able to continue doing so even when they receive new events that contain the new field.
+
+ 
+ Consider a use case where a consumer has application logic tied to a particular version of the schema. When the schema evolves, the application logic may not be updated immediately. Therefore, you need to be able to project data with newer schemas onto the (older) schema that the application understands. To support this use case, you can evolve the schemas in a forward compatible way: data encoded with the new schema can be read with the old schema. For example, the new user schema shown in the previous section on backward compatibility is also forward compatible with the old one. When projecting data written with the new schema to the old one, the new field is simply dropped. Had the new schema dropped the original field favorite_number (number, not color), it would not be forward compatible with the original user schema since consumers wouldn’t know how to fill in the value for favorite_number for the new data because the original schema did not specify a default value for that field.
+
+
+### Full Compatibility
+FULL compatibility means schemas are both backward and forward compatible. Schemas evolve in a fully compatible way: old data can be read with the new schema, and new data can also be read with the last schema. For example, if there are three schemas for a subject that change in order X-2, X-1, and X then FULL compatibility ensures that consumers using the new schema X can process data written by producers using schema X or X-1, but not necessarily X-2, and that data written by producers using the new schema X can be processed by consumers using schema X or X-1, but not necessarily X-2. If the new schema needs to be forward and backward compatible with all registered schemas, not just the last two schemas, then use FULL_TRANSITIVE instead of FULL. For example, if there are three schemas for a subject that change in order X-2, X-1, and X then FULL_TRANSITIVE compatibility ensures that consumers using the new schema X can process data written by producers using schema X, X-1, or X-2, and that data written by producers using the new schema X can be processed by consumers using schema X, X-1, or X-2.
+
+FULL: backward and forward compatibile between schemas X and X-1
+FULL_TRANSITIVE: backward and forward compatibile between schemas X, X-1, and X-2
+In Avro and Protobuf, you can define fields with default values. In that case, adding or removing a field with a default value is a fully compatible change.
+
+### No Compatibility Checking
+NONE compatibility type means schema compatibility checks are disabled.
+
+Sometimes we make incompatible changes. For example, modifying a field type from Number to String. In this case, you will either need to upgrade all producers and consumers to the new schema version at the same time, or more likely – create a brand-new topic and start migrating applications to use the new topic and new schema, avoiding the need to handle two incompatible versions in the same topic.
+
+### Transitive Property
+
+Transitive compatibility checking is important once you have more than two versions of a schema for a given subject. If compatibility is configured as transitive, then it checks compatibility of a new schema against all previously registered schemas; otherwise, it checks compatibility of a new schema only against the latest schema.
+
+For example, if there are three schemas for a subject that change in order X-2, X-1, and X then:
+
+transitive: ensures compatibility between X-2 <==> X-1 and X-1 <==> X and X-2 <==> X
+non-transitive: ensures compatibility between X-2 <==> X-1 and X-1 <==> X, but not necessarily X-2 <==> X
+
+Refer to an example of schema changes which are incrementally compatible, but not transitively so.
+
+The Confluent Schema Registry default compatibility type BACKWARD is non-transitive, which means that it’s not BACKWARD_TRANSITIVE. As a result, new schemas are checked for compatibility only against the latest schema.
+
+### Order of Upgrading Clients
+
+The configured compatibility type has an implication on the order for upgrading client applications, i.e., the producers using schemas to write events to Kafka and the consumers using schemas to read events from Kafka. Depending on the compatibility type:
+
+- BACKWARD or BACKWARD_TRANSITIVE: there is no assurance that consumers using older schemas can read data produced using the new schema. Therefore, upgrade all consumers before you start producing new events.
+- FORWARD or FORWARD_TRANSITIVE: there is no assurance that consumers using the new schema can read data produced using older schemas. Therefore, first upgrade all producers to using the new schema and make sure the data already produced using the older schemas are not available to consumers, then upgrade the consumers.
+- FULL or FULL_TRANSITIVE: there are assurances that consumers using older schemas can read data produced using the new schema and that consumers using the new schema can read data produced using older schemas. Therefore, you can upgrade the producers and consumers independently.
+- NONE: compatibility checks are disabled. Therefore, you need to be cautious about when to upgrade clients.
+
+### For Kafka Streams only BACKWARD compatibility is supported.
+
+For a plain consumer, it is safe to upgrade the consumer to the new schema after the producer is upgraded because a plain consumer reads only from the input topic. For Kafka Streams, the scenario is different. When you upgrade Kafka Streams, it also can read from the input topic (that now contains data with the new schema). However, in contrast to a plain consumer, Kafka Streams must also be able to read the old schema (from the state/changelog); therefore, only BACKWARD compatibility is supported. The Kafka Streams apps must be upgraded first, then it safe to upgrade the upstream producer that writes into the input topic.
+
+FULL and TRANSITIVE compatibility are always supported for Kafka Streams, as they include backward compatibility and so are, in effect, “stronger” settings than BACKWARD.
+
+
+### Examples
+
+[Avro compatibility test suite](https://github.com/confluentinc/schema-registry/blob/master/core/src/test/java/io/confluent/kafka/schemaregistry/avro/AvroCompatibilityTest.java)
+
+### Using Compatibility Types
+
+1.To check the currently configured compatibility type, view the configured setting:
+
+Using the Schema Registry REST API.
+To set the compatibility level, you can configure it in the following ways:
+
+1.In your client application.
+2.Using the Schema Registry REST API.
+3.Using the Control Center Edit Schema feature. See Manage Schemas for Topics in Control Center.
+
+A REST API call to compatibility mode is global meaning it overrides any compatibility parameters set in schema registry properties files, as shown in the API usage example Update compatibility requirements globally.
+
+
+
+
+
 
 
