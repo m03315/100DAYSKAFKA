@@ -25,6 +25,7 @@ KAFKA  100-Day Challenge
 - [Java Maven Application](/kafka-java-maven-application/)
 - [Springboot Application](/kafka-java-springboot/)
 - [Springboot Getting started](/kafka-spring-boot-getting-started/)
+- [Kafka Stream Java Gradle Application](/kafka-streams/)
 
 ### .Net
 - [Producer and Consumer using .Net](/kafka-dotnet-getting-started/)
