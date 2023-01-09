@@ -62,6 +62,67 @@ builder.stream(“widgets”, Consumed.with(stringSerde, widgetsSerde))
 ```
 Instantiate a StreamsBuilder, then you create a stream based off of a topic and give it a SerDes. Then you filter the records and write back out to the widgets-red topic.
 
+## Basic Operations
+
+### Events streams 
+
+An event represents data corresponds to an action, such as a notification or state transfer.
+
+An event stream is an unbounded collection of event records.
+
+key-value pairs, records have the same key don't have anything to do with one another, event theirs keys are identical.
+
+### Topologies
+
+Flow of stream processing, Kafka Streams uses topologies, which are directed acyclic graphs (DAGs)
+
+- Source Processor
+- Stream Processor
+- Stream
+- Sink Processor
+
+Each Kafka Stream topology has a source processor, where records are read in from Kafka.  A child node could have multiple parent nodes, and a parent node can have multiple child nodes. It all feeds down to a sink processor, which writes out to Kafka.
+
+### Streams
+
+You define a stream with a StreamBuilder, for which you specify an input topic as well as SerDes configurations, via a Consumed configuration object. 
+```
+StreamBuilder builder = new StreamBuilder();
+KStream<String, String> firstStream = 
+builder.stream(inputTopic, Consumed.with(Serdes.String(), Serdes.String()));
+```
+A KStream is part of the Kafka Streams DSL, and it’s one of the main constructs you'll be working with.
+
+
+### Stream Operations
+
+- Mapping:
+
+With mapping, you take an input object of one type, apply a function to it, and then output it as a different object, potentially of another type.
+
+using mapValues, you could convert a string to another string that omits the first five characters
+```
+mapValues(value -> value.substring(5))
+```
+
+Map, on the other hand, lets you change the key and the value:
+```
+map((key, value) -> ..)
+```
+
+- Filterings:
+
+With a filter, you send a key and value, and only the records that match a predicate make it through to the other side.
+```
+filter((key, value) -> Long.parseLong(value) > 1000)
+```
+
+
+
+
+
+
+
 
 
 
