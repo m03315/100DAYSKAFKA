@@ -53,7 +53,8 @@ tasks.named('test') {
 
 
 var basePackage = 'io.m03315.learning.kafka.'
-def exerciseMap = [basic    : basePackage + 'BasicStreams']
+def exerciseMap = [basic    : basePackage + 'BasicStreams',
+                   ktable : basePackage + 'KTableExample']
 
 task runStreams(type: Exec) {
 
