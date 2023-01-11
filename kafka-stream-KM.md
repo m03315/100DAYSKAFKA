@@ -118,10 +118,51 @@ filter((key, value) -> Long.parseLong(value) > 1000)
 ```
 
 
+## KTable
 
+### Update Streams
 
+Update Streams are the exact opposite: if a new record comes in with the same key as an existing record, the existing record will be overwritten.
 
+### Defining a KTable
+To define a KTable, you use a StreamBuilder, as with a KStream, but you call builder.table instead of builder.stream. With the builder.table method, you provide an inputTopic, along with a Materialized configuration object specifying your SerDes (this replaces the Consumed object that you use with a KStream):
+```
+ StreamBuilder builder = new StreamBuilder();
+ KTable<String, String> firstKTable = 
+    builder.table(inputTopic, 
+    Materialized.with(Serdes.String(), Serdes.String()));
+```
 
+### KTable Operations
+
+Mapping : 
+As with KStream, mapValues transforms values and map lets you transform both keys and values.
+
+```
+firstKTable.mapValues(value -> ..)
+firstKTable.map((key,value) -> ..)
+```
+
+Filtering : 
+
+As with KStream, the filter operation lets you supply a predicate, and only records that match the predicate are forwarded to the next node in the topology:
+
+```
+firstKTable.filter((key, value) -> ..)
+```
+
+### GlobalKTable
+
+A GlobalKTable is built using the GlobalKTable method on the StreamBuilder. As with a regular KTable, you pass in a Materialized configuration with the SerDes:
+
+```
+ StreamBuilder builder = new StreamBuilder();
+ GlobalKTable<String, String> globalKTable = 
+    builder.globalTable(inputTopic, 
+    Materialized.with(Serdes.String(), Serdes.String()));
+```
+
+The main difference between a KTable and a GlobalKTable is that a KTable shards data between Kafka Streams instances, while a GlobalKTable extends a full copy of the data to each instance. You typically use a GlobalKTable with lookup data.
 
 
 
