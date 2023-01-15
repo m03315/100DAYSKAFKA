@@ -165,5 +165,54 @@ A GlobalKTable is built using the GlobalKTable method on the StreamBuilder. As w
 The main difference between a KTable and a GlobalKTable is that a KTable shards data between Kafka Streams instances, while a GlobalKTable extends a full copy of the data to each instance. You typically use a GlobalKTable with lookup data.
 
 
+## Serialization
+
+Serialization is important for Apache Kafka because as mentioned above, a Kafka broker only works with bytes. Kafka stores records in bytes, and when a fetch request comes in from a consumer, Kafka returns records in bytes. The broker really knows nothing about its records; it just appends them to the end of a file, and that's the end of it.
+
+
+### Kafka Streams
+
+To bring data into Kafka Streams, you provide SerDes for your topic’s key and value in the Consumed configuration object.
+
+```
+StreamsBuilder builder = new StreamsBuilder()
+KStream<String, MyObject> stream = builder.stream("topic",
+    Consumed.with(Serdes.String(), customObjectSerde)
+```
+Write out from Kafka Streams, you have to provide a SerDes to serialize your data:
+```
+KStream<String, CustomObject> modifiedStream = 
+    stream.filter( (key, value) -> value.startsWith(“ID5”))               
+.mapValues( value -> new CustomObject(value));
+
+modifiedStream.to(“output-topic”, Produced.with(Serdes.String(), customObjectSerde);
+```
+### Custom SerDes
+To create a custom SerDes, use the factory method Serdes.serdeFrom and pass both a serializer instance and a deserializer instance:
+
+```
+Serde<T> serde = Serdes.serdeFrom( new CustomSerializer<T>, 
+    new CustomDeserializer<T>); 
+```
+
+Need to implement the Serializer and Deserializer interfaces from the org.apache.kafka.clients package to create your own serializer and deserializer
+
+
+### Pre-Existing SerDes
+Kafka Streams includes SerDes for String, Integer, Double, Long, Float, Bytes, ByteArray, and ByteBuffer types.
+
+
+### Avro, Protobuf, or JSON Schema
+
+Depending on whether you are using a specific or generic object, you can use either SpecificAvroSerde or GenericAvroSerde.
+
+SpecificAvroSerde serializes from a specific type, and when you deserialize, you get a specific type back. GenericAvroSerde returns a type-agnostic object, and you access fields in a manner similar to how you retrieve elements from a HashMap.
+
+KafkaProtobufSerde encapsulates a serializer and deserializer for Protobuf-encoded data. It has methods that allow you to retrieve a SerDes as needed.
+
+KafkaJsonSchemaSerde encapsulates a serializer and deserializer for JSON-formatted data. It also has methods that allow you to retrieve a SerDes as needed.
+
+
+
 
 
