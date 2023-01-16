@@ -213,6 +213,73 @@ KafkaProtobufSerde encapsulates a serializer and deserializer for Protobuf-encod
 KafkaJsonSchemaSerde encapsulates a serializer and deserializer for JSON-formatted data. It also has methods that allow you to retrieve a SerDes as needed.
 
 
+## Joins 
+
+- Kafka Streams offers join operations
+- Stream-Stream joins : 
+Combine two event streams into a new event stream
+Join of events based on a common key
+Records arrive within a defined window of time
+Possible to compute a new value type
+Keys are available in read-only mode can be used in computing the new value
+
+- Stream Table joins : 
+
+KStream KTable
+KStream GlobalKTable
+
+- Table Table joins 
+
+### Type Available
+
+- Stream-Stream
+Inner - Only if both side are available within the defined window is a joined result emitted
+- Outer - Both sides always produce an output record
+Left-value + Right value
+Left-value + Null
+Null + Right value
+
+- Left Outer - The left side always produces an output record
+Left-value + Right value
+Left-value + Null
+
+### Stream Table
+
+Inner :
+An inner join only fires if both sides are available.
+
+Left Outer:
+The KStream always produces a record, either a combination of the left and right values, or the left value and a null representing the right side.
+
+GlobalKTable-Stream Join Properties:
+With a GlobalKTable, you get full replication of the underlying topic across all instances, as opposed to sharding. GlobalKTable provides a mechanism whereby, when you perform a join with a KStream, the key of the stream doesn't have to match. You get a KeyValueMapper when you define the join, and you can derive the key to match the GlobalKTable key using the stream key and/or value.
+
+Yet another difference between a KTable join and a GlobalKTable join is the fact that a KTable uses timestamps. With a GlobalKTable, when there is an update to the underlying topic, the update is just automatically applied. It's divorced completely from the time mechanism within Kafka Streams. (In contrast, with a KTable, timestamps are part of your event stream processing.) This means that a GlobalKTable is suited for mostly static lookup data. For example, you might use it to hold relatively static user information for matching against transactions.
+
+### Table-Table
+
+join a KTable with a KTable. Note that you can only join a GlobalKTable with a KStream.
+ 
+```
+KStream<String, String> leftStream = builder.stream("topic-A");
+KStream<String, String> rightStream = builder.stream("topic-B");
+
+ValueJoiner<String, String, String> valueJoiner = (leftValue, rightValue) -> {
+    return leftValue + rightValue;
+};
+leftStream.join(rightStream, 
+                valueJoiner, 
+                JoinWindows.of(Duration.ofSeconds(10)));
+```
+
+The JoinWindows argument, which states that an event on the right side needs to have a timestamp either 10 seconds before the left-stream side or 10 seconds after the left-stream side.
+
+
+
+
+
+
+
 
 
 
