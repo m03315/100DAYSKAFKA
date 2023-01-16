@@ -1,0 +1,11 @@
+{
+  "namespace": "io.m03315.learning.kafka.avro",
+  "type": "record",
+  "name": "ApplianceOrder",
+  "fields": [
+    {"name": "order_id", "type": "string"},
+    {"name": "appliance_id", "type": "string"},
+    {"name": "user_id", "type": "string"},
+    {"name": "time", "type": "long"}
+  ]
+}

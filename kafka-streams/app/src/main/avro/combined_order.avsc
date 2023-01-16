@@ -1,0 +1,12 @@
+{
+  "namespace": "io.m03315.learning.kafka.avro",
+  "type": "record",
+  "name": "CombinedOrder",
+  "fields": [
+    {"name": "electronic_order_id", "type": "string"},
+    {"name": "appliance_order_id", "type": "string"},
+    {"name": "appliance_id", "type": "string"},
+    {"name": "user_name", "type": "string", "default": ""},
+    {"name": "time", "type": "long"}
+  ]
+}
