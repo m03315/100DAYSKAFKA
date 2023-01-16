@@ -9,6 +9,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id "com.github.davidmc24.gradle.plugin.avro" version "1.0.0"
 }
 
 repositories {
@@ -46,6 +47,19 @@ application {
     mainClass = 'io.m03315.learning.kafka.BasicStreams'
 }
 
+/*
+
+def generateAvro = tasks.register("generateAvro", com.github.davidmc24.gradle.plugin.avro.GenerateAvroJavaTask) {
+    source("src/main/avro")
+    outputDir = file("src/main/java")
+    fieldVisibility = "PUBLIC"
+    enableDecimalLogicalType = true
+}
+
+tasks.named("compileJava").configure {
+    source(generateAvro)
+} */
+
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
@@ -54,7 +68,8 @@ tasks.named('test') {
 
 var basePackage = 'io.m03315.learning.kafka.'
 def exerciseMap = [basic    : basePackage + 'BasicStreams',
-                   ktable : basePackage + 'KTableExample']
+                   ktable : basePackage + 'KTableExample',
+                   joins: basePackage + 'StreamsJoin']
 
 task runStreams(type: Exec) {
 
