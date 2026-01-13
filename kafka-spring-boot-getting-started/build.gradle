@@ -1,6 +1,6 @@
 buildscript {
   repositories {
-    jcenter()
+    mavenCentral()
   }
 }
 
@@ -11,7 +11,7 @@ plugins {
 }
 
 repositories {
-  jcenter()
+  mavenCentral()
 
   maven {
     url 'https://packages.confluent.io/maven'
@@ -23,10 +23,6 @@ apply plugin: 'idea'
 group = 'examples'
 version = '0.0.1'
 sourceCompatibility = 11
-
-repositories {
-  jcenter()
-}
 
 dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-web:2.7.5'
