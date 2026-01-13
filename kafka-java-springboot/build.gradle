@@ -1,7 +1,6 @@
 buildscript {
   repositories {
     mavenCentral()
-    gradlePluginPortal()
   }
   dependencies {
     classpath 'com.github.davidmc24.gradle.plugin:gradle-avro-plugin:1.9.1'
