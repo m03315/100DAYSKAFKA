@@ -34,7 +34,7 @@ bootJar {
 
 dependencies {
   implementation 'org.springframework.boot:spring-boot-starter'
-  implementation 'org.apache.kafka:kafka-streams'
+  implementation 'org.apache.kafka:kafka-streams:3.6.1'
   implementation 'org.springframework.kafka:spring-kafka'
 
   compileOnly 'org.projectlombok:lombok'
